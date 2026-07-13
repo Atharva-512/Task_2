@@ -25,6 +25,17 @@ class Settings:
         self.port: int = int(os.getenv("PORT", "8000"))
         self.database_path: str = os.getenv("DATABASE_PATH", "")
 
+    def validate(self) -> None:
+        """Validate required configuration values.
+
+        Raises:
+            ValueError: If a required setting is missing or invalid.
+        """
+        if not self.database_path:
+            raise ValueError("DATABASE_PATH environment variable is not set.")
+        if not isinstance(self.port, int) or self.port <= 0:
+            raise ValueError(f"Invalid PORT value: {self.port!r}")
+
     @property
     def is_production(self) -> bool:
         return self.app_env.lower() == "production"

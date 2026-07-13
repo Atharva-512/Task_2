@@ -1,7 +1,7 @@
 """FastAPI application entrypoint.
 
-Phase 1 scope: app wiring, CORS, lifespan events, and a health check only.
-No database connection and no analytical endpoints live here yet.
+Phase 2 scope: app wiring, CORS, lifespan-managed DuckDB connection, and a
+health check. No analytical endpoints or business logic live here yet.
 """
 
 import logging
@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import health
 from app.core.config import get_settings
+from app.db.connection import close_connection, get_connection
 
 logger = logging.getLogger("restaurant_pos_api")
 logging.basicConfig(level=logging.INFO)
@@ -32,7 +33,15 @@ LOCAL_DEV_ORIGINS = [
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Application startup and shutdown lifecycle."""
     logger.info("Starting %s in '%s' mode", app.title, settings.app_env)
+
+    settings.validate()
+    logger.info("Configuration validated successfully.")
+
+    get_connection()
+
     yield
+
+    close_connection()
     logger.info("Shutting down %s", app.title)
 
 
