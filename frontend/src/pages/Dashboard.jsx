@@ -51,7 +51,10 @@ export default function Dashboard() {
     refetch: refetchBrand,
   } = useBrandPerformance();
 
-  const grossSales = summary?.gross_sales ?? summary?.grossSales;
+  const grossSales =
+  summary?.total_sales ??
+  summary?.gross_sales ??
+  summary?.grossSales;
   const totalOrders = summary?.total_orders ?? summary?.totalOrders;
   const averageOrderValue =
     summary?.average_order_value ?? summary?.averageOrderValue;
