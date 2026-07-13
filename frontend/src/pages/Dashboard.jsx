@@ -1,7 +1,9 @@
+import { useMemo, useState } from "react";
 import LoadingScreen from "../components/LoadingScreen.jsx";
 import ErrorMessage from "../components/ErrorMessage.jsx";
 import KpiCard from "../components/KpiCard.jsx";
 import DashboardPanel from "../components/DashboardPanel.jsx";
+import FilterToolbar from "../components/FilterToolbar.jsx";
 import DailySalesChart from "../components/charts/DailySalesChart.jsx";
 import PlatformPerformanceChart from "../components/charts/PlatformPerformanceChart.jsx";
 import BrandPerformanceChart from "../components/charts/BrandPerformanceChart.jsx";
@@ -9,8 +11,16 @@ import useSummary from "../hooks/useSummary.js";
 import useDailySales from "../hooks/useDailySales.js";
 import usePlatformPerformance from "../hooks/usePlatformPerformance.js";
 import useBrandPerformance from "../hooks/useBrandPerformance.js";
+import useFilters from "../hooks/useFilters.js";
 import { formatCurrency, formatNumber } from "../utils/format.js";
 import styles from "./Dashboard.module.css";
+
+const DEFAULT_FILTERS = {
+  startDate: "",
+  endDate: "",
+  platform: "",
+  brand: "",
+};
 
 function PanelContent({ loading, error, onRetry, loadingMessage, children }) {
   if (loading) {
@@ -22,39 +32,54 @@ function PanelContent({ loading, error, onRetry, loadingMessage, children }) {
   return children;
 }
 
+function buildQueryParams(filters) {
+  const params = {};
+  if (filters.startDate) params.start_date = filters.startDate;
+  if (filters.endDate) params.end_date = filters.endDate;
+  if (filters.platform) params.platform = filters.platform;
+  if (filters.brand) params.brand = filters.brand;
+  return params;
+}
+
 export default function Dashboard() {
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const queryParams = useMemo(() => buildQueryParams(filters), [filters]);
+
+  const {
+    data: filterOptions,
+    loading: filterOptionsLoading,
+    error: filterOptionsError,
+  } = useFilters();
+
   const {
     data: summary,
     loading: summaryLoading,
     error: summaryError,
     refetch: refetchSummary,
-  } = useSummary();
+  } = useSummary(queryParams);
 
   const {
     data: dailySales,
     loading: dailySalesLoading,
     error: dailySalesError,
     refetch: refetchDailySales,
-  } = useDailySales();
+  } = useDailySales(queryParams);
 
   const {
     data: platformPerformance,
     loading: platformLoading,
     error: platformError,
     refetch: refetchPlatform,
-  } = usePlatformPerformance();
+  } = usePlatformPerformance(queryParams);
 
   const {
     data: brandPerformance,
     loading: brandLoading,
     error: brandError,
     refetch: refetchBrand,
-  } = useBrandPerformance();
+  } = useBrandPerformance(queryParams);
 
-  const grossSales =
-  summary?.total_sales ??
-  summary?.gross_sales ??
-  summary?.grossSales;
+  const grossSales = summary?.gross_sales ?? summary?.grossSales;
   const totalOrders = summary?.total_orders ?? summary?.totalOrders;
   const averageOrderValue =
     summary?.average_order_value ?? summary?.averageOrderValue;
@@ -64,6 +89,16 @@ export default function Dashboard() {
   return (
     <div className={styles.page}>
       <h1 className={styles.heading}>Restaurant POS Dashboard</h1>
+
+      <FilterToolbar
+        filters={filters}
+        onChange={setFilters}
+        onReset={() => setFilters(DEFAULT_FILTERS)}
+        platforms={filterOptions?.platforms}
+        brands={filterOptions?.brands}
+        loading={filterOptionsLoading}
+        error={filterOptionsError}
+      />
 
       {summaryLoading && <LoadingScreen message="Loading summary..." />}
       {summaryError && (
