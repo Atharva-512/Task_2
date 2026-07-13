@@ -27,6 +27,7 @@ _column_cache: dict[str, list[str]] = {}
 
 
 def _relation_exists(name: str) -> bool:
+    """Check whether a view or table exists in the warehouse catalog."""
     query = """
         SELECT COUNT(*) AS cnt
         FROM information_schema.tables
@@ -65,6 +66,7 @@ def _resolve_column(relation: str, candidates: list[str]) -> str:
 
 
 def get_summary() -> dict:
+    """Return aggregate sales summary metrics (gross figures)."""
     if _relation_exists(_VIEW_SUMMARY):
         sql = f"SELECT * FROM {_VIEW_SUMMARY}"
         df = execute_query(sql)
@@ -77,7 +79,6 @@ def get_summary() -> dict:
                 "total_tax": 0.0,
                 "total_discount": 0.0,
             }
-        available = _get_columns(_VIEW_SUMMARY)
         sales_col = _resolve_column(_VIEW_SUMMARY, ["total_sales", "gross_sales", "sales"])
         orders_col = _resolve_column(_VIEW_SUMMARY, ["total_orders", "orders"])
         aov_col = _resolve_column(
@@ -137,29 +138,46 @@ def get_summary() -> dict:
     }
 
 
-def get_platform_performance() -> list[dict]:
+def get_platform_performance(platform: Optional[str] = None) -> list[dict]:
+    """Return order counts and gross sales by platform, optionally filtered to one platform."""
     if _relation_exists(_VIEW_PLATFORM_PERFORMANCE):
         platform_col = _resolve_column(_VIEW_PLATFORM_PERFORMANCE, ["platform"])
         orders_col = _resolve_column(_VIEW_PLATFORM_PERFORMANCE, ["orders"])
         sales_col = _resolve_column(
             _VIEW_PLATFORM_PERFORMANCE, ["gross_sales", "net_sales", "sales"]
         )
+
+        params: list = []
+        where_clause = ""
+        if platform:
+            where_clause = f"WHERE {platform_col} = ?"
+            params.append(platform)
+
         sql = f"""
             SELECT
                 {platform_col} AS platform,
                 {orders_col} AS orders,
                 {sales_col} AS sales
             FROM {_VIEW_PLATFORM_PERFORMANCE}
+            {where_clause}
             ORDER BY {sales_col} DESC
         """
-        df = execute_query(sql)
+        df = execute_query(sql, tuple(params) if params else None)
         return df.to_dict(orient="records")
 
     platform_col = _resolve_column(_FACT_ORDERS, ["platform"])
     sales_col = _resolve_column(
-        _FACT_ORDERS, ["gross_sales", "gross_revenue", "total_sales", "sales_amount"]
+        _FACT_ORDERS, ["total", "my_amount", "gross_sales", "gross_revenue", "total_sales", "sales_amount"]
     )
-    order_id_col = _resolve_column(_FACT_ORDERS, ["order_id", "order_no", "order_number"])
+    order_id_col = _resolve_column(
+        _FACT_ORDERS, ["invoice_no", "order_id", "order_no", "order_number"]
+    )
+
+    params = []
+    where_clause = ""
+    if platform:
+        where_clause = f"WHERE {platform_col} = ?"
+        params.append(platform)
 
     sql = f"""
         SELECT
@@ -167,36 +185,54 @@ def get_platform_performance() -> list[dict]:
             COUNT(DISTINCT {order_id_col}) AS orders,
             COALESCE(SUM({sales_col}), 0) AS sales
         FROM {_FACT_ORDERS}
+        {where_clause}
         GROUP BY {platform_col}
         ORDER BY sales DESC
     """
-    df = execute_query(sql)
+    df = execute_query(sql, tuple(params) if params else None)
     return df.to_dict(orient="records")
 
 
-def get_brand_performance() -> list[dict]:
+def get_brand_performance(brand: Optional[str] = None) -> list[dict]:
+    """Return order counts and gross sales by brand, optionally filtered to one brand."""
     if _relation_exists(_VIEW_BRAND_PERFORMANCE):
         brand_col = _resolve_column(_VIEW_BRAND_PERFORMANCE, ["brand"])
         orders_col = _resolve_column(_VIEW_BRAND_PERFORMANCE, ["orders"])
         sales_col = _resolve_column(
             _VIEW_BRAND_PERFORMANCE, ["gross_sales", "net_sales", "sales"]
         )
+
+        params: list = []
+        where_clause = ""
+        if brand:
+            where_clause = f"WHERE {brand_col} = ?"
+            params.append(brand)
+
         sql = f"""
             SELECT
                 {brand_col} AS brand,
                 {orders_col} AS orders,
                 {sales_col} AS sales
             FROM {_VIEW_BRAND_PERFORMANCE}
+            {where_clause}
             ORDER BY {sales_col} DESC
         """
-        df = execute_query(sql)
+        df = execute_query(sql, tuple(params) if params else None)
         return df.to_dict(orient="records")
 
     brand_col = _resolve_column(_FACT_ORDERS, ["brand"])
     sales_col = _resolve_column(
-        _FACT_ORDERS, ["gross_sales", "gross_revenue", "total_sales", "sales_amount"]
+        _FACT_ORDERS, ["total", "my_amount", "gross_sales", "gross_revenue", "total_sales", "sales_amount"]
     )
-    order_id_col = _resolve_column(_FACT_ORDERS, ["order_id", "order_no", "order_number"])
+    order_id_col = _resolve_column(
+        _FACT_ORDERS, ["invoice_no", "order_id", "order_no", "order_number"]
+    )
+
+    params = []
+    where_clause = ""
+    if brand:
+        where_clause = f"WHERE {brand_col} = ?"
+        params.append(brand)
 
     sql = f"""
         SELECT
@@ -204,10 +240,11 @@ def get_brand_performance() -> list[dict]:
             COUNT(DISTINCT {order_id_col}) AS orders,
             COALESCE(SUM({sales_col}), 0) AS sales
         FROM {_FACT_ORDERS}
+        {where_clause}
         GROUP BY {brand_col}
         ORDER BY sales DESC
     """
-    df = execute_query(sql)
+    df = execute_query(sql, tuple(params) if params else None)
     return df.to_dict(orient="records")
 
 
@@ -215,6 +252,7 @@ def get_daily_sales(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
 ) -> list[dict]:
+    """Return daily sales and order counts, optionally filtered by an inclusive date range."""
     if _relation_exists(_VIEW_DAILY_SALES):
         date_col = _resolve_column(_VIEW_DAILY_SALES, ["business_date"])
         sales_col = _resolve_column(
@@ -243,9 +281,12 @@ def get_daily_sales(
     else:
         date_col = _resolve_column(_FACT_ORDERS, ["business_date"])
         sales_col = _resolve_column(
-            _FACT_ORDERS, ["gross_sales", "gross_revenue", "total_sales", "sales_amount"]
+            _FACT_ORDERS, ["total", "my_amount", "gross_sales", "gross_revenue", "total_sales", "sales_amount"]
         )
-        order_id_col = _resolve_column(_FACT_ORDERS, ["order_id", "order_no", "order_number"])
+        order_id_col = _resolve_column(
+            _FACT_ORDERS, ["invoice_no", "order_id", "order_no", "order_number"]
+        )
+        orders_col = "orders"
 
         filters = []
         params = []
@@ -268,6 +309,9 @@ def get_daily_sales(
             ORDER BY {date_col}
         """
         df = execute_query(sql, tuple(params) if params else None)
+        date_col = "business_date"
+        sales_col = "sales"
+        orders_col = "orders"
 
     if df.empty:
         return []
@@ -285,3 +329,45 @@ def get_daily_sales(
         df["business_date"] = df["business_date"].astype(str)
 
     return df.to_dict(orient="records")
+
+
+def get_filters() -> dict:
+    """Return available brands, platforms and business date range."""
+
+    platforms_df = execute_query("""
+        SELECT DISTINCT platform
+        FROM dim_platform
+        WHERE platform IS NOT NULL
+        ORDER BY platform
+    """)
+
+    brands_df = execute_query("""
+        SELECT DISTINCT brand
+        FROM dim_brand
+        WHERE brand IS NOT NULL
+        ORDER BY brand
+    """)
+
+    dates_df = execute_query("""
+        SELECT
+            MIN(business_date) AS min_business_date,
+            MAX(business_date) AS max_business_date
+        FROM dim_date
+    """)
+
+    min_date = None
+    max_date = None
+
+    if not dates_df.empty:
+        if pd.notna(dates_df.iloc[0]["min_business_date"]):
+            min_date = str(dates_df.iloc[0]["min_business_date"])[:10]
+
+        if pd.notna(dates_df.iloc[0]["max_business_date"]):
+            max_date = str(dates_df.iloc[0]["max_business_date"])[:10]
+
+    return {
+        "platforms": platforms_df["platform"].tolist() if not platforms_df.empty else [],
+        "brands": brands_df["brand"].tolist() if not brands_df.empty else [],
+        "min_business_date": min_date,
+        "max_business_date": max_date,
+    }

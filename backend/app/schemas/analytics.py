@@ -1,5 +1,7 @@
 """Response schemas for analytics endpoints."""
 
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -27,3 +29,10 @@ class DailySales(BaseModel):
     business_date: str
     sales: float
     orders: int
+
+
+class FiltersResponse(BaseModel):
+    platforms: list[str]
+    brands: list[str]
+    min_business_date: Optional[str]
+    max_business_date: Optional[str]
