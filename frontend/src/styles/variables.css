@@ -1,0 +1,32 @@
+:root {
+  /* Colors */
+  --color-background: #f5f6fa;
+  --color-surface: #ffffff;
+  --color-border: #e2e4ea;
+  --color-hover: #f0f1f5;
+  --color-text-primary: #1a1d23;
+  --color-text-secondary: #6b7280;
+  --color-primary: #2f6feb;
+  --color-primary-subtle: #eaf1fd;
+  --color-danger: #d64545;
+
+  /* Typography */
+  --font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.75rem;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+
+  /* Layout */
+  --sidebar-width: 220px;
+  --header-height: 60px;
+  --radius-md: 8px;
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
