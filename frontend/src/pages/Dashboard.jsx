@@ -1,44 +1,77 @@
 import LoadingScreen from "../components/LoadingScreen.jsx";
 import ErrorMessage from "../components/ErrorMessage.jsx";
+import KpiCard from "../components/KpiCard.jsx";
+import DashboardPanel from "../components/DashboardPanel.jsx";
 import useSummary from "../hooks/useSummary.js";
-import usePlatformPerformance from "../hooks/usePlatformPerformance.js";
-import useBrandPerformance from "../hooks/useBrandPerformance.js";
-import useDailySales from "../hooks/useDailySales.js";
-import useFilters from "../hooks/useFilters.js";
 import styles from "./Dashboard.module.css";
 
-export default function Dashboard() {
-  const summary = useSummary();
-  const platformPerformance = usePlatformPerformance();
-  const brandPerformance = useBrandPerformance();
-  const dailySales = useDailySales();
-  const filters = useFilters();
+function formatCurrency(value) {
+  if (value === undefined || value === null || Number.isNaN(Number(value))) {
+    return "—";
+  }
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(Number(value));
+}
 
-  const sections = [
-    { title: "Summary", state: summary },
-    { title: "Platform Performance", state: platformPerformance },
-    { title: "Brand Performance", state: brandPerformance },
-    { title: "Daily Sales", state: dailySales },
-    { title: "Filters", state: filters },
-  ];
+function formatNumber(value) {
+  if (value === undefined || value === null || Number.isNaN(Number(value))) {
+    return "—";
+  }
+  return new Intl.NumberFormat("en-IN").format(Number(value));
+}
+
+export default function Dashboard() {
+  const { data: summary, loading, error, refetch } = useSummary();
+
+  const grossSales = summary?.gross_sales ?? summary?.grossSales;
+  const totalOrders = summary?.total_orders ?? summary?.totalOrders;
+  const averageOrderValue =
+    summary?.average_order_value ?? summary?.averageOrderValue;
+  const totalTax = summary?.total_tax ?? summary?.totalTax;
+  const totalDiscount = summary?.total_discount ?? summary?.totalDiscount;
 
   return (
     <div className={styles.page}>
-      {sections.map(({ title, state }) => (
-        <section key={title}>
-          <h2>{title}</h2>
-          {state.loading && <LoadingScreen message={`Loading ${title}...`} />}
-          {state.error && (
-            <ErrorMessage
-              message={`Failed to load ${title}: ${state.error}`}
-              onRetry={state.refetch}
-            />
-          )}
-          {!state.loading && !state.error && (
-            <pre>{JSON.stringify(state.data, null, 2)}</pre>
-          )}
-        </section>
-      ))}
+      <h1 className={styles.heading}>Restaurant POS Dashboard</h1>
+
+      {loading && <LoadingScreen message="Loading summary..." />}
+      {error && (
+        <ErrorMessage
+          message={`Failed to load summary: ${error}`}
+          onRetry={refetch}
+        />
+      )}
+
+      {!loading && !error && (
+        <div className={styles.kpiRow}>
+          <KpiCard title="Gross Sales" value={formatCurrency(grossSales)} />
+          <KpiCard title="Total Orders" value={formatNumber(totalOrders)} />
+          <KpiCard
+            title="Average Order Value"
+            value={formatCurrency(averageOrderValue)}
+          />
+          <KpiCard title="Total Tax" value={formatCurrency(totalTax)} />
+          <KpiCard
+            title="Total Discount"
+            value={formatCurrency(totalDiscount)}
+          />
+        </div>
+      )}
+
+      <DashboardPanel title="Daily Sales Trend">
+        Chart will be added in Phase 6.2
+      </DashboardPanel>
+
+      <DashboardPanel title="Platform Performance">
+        Chart will be added in Phase 6.2
+      </DashboardPanel>
+
+      <DashboardPanel title="Brand Performance">
+        Chart will be added in Phase 6.2
+      </DashboardPanel>
     </div>
   );
 }
