@@ -25,12 +25,11 @@ Designed as a lightweight analytics serving layer with real-time SQL queries, in
 
 ## 🌐 Live Demo
 
-**Frontend:** https://your-vercel-app.vercel.app
-
-**Backend API:** https://your-render-app.onrender.com
-
-**Swagger Documentation:** https://your-render-app.onrender.com/docs
-
+| Resource | Link |
+|----------|------|
+| 🚀 Live Dashboard | https://task-2-six-sable.vercel.app |
+| 🔗 Backend API | https://restaurant-pos-api-3nz8.onrender.com |
+| 📘 Swagger Documentation | https://restaurant-pos-api-3nz8.onrender.com/docs |
 ---
 
 ## 📌 Overview
