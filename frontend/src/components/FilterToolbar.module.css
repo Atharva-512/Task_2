@@ -6,7 +6,16 @@
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
+  justify-content: space-between;
   gap: var(--space-md);
+}
+
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-md);
+  flex: 1 1 auto;
 }
 
 .field {
@@ -20,7 +29,7 @@
 .label {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .input {
@@ -30,6 +39,8 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-primary);
   background: var(--color-background);
+  height: 40px;
+  transition: border-color 0.15s ease;
 }
 
 .input:focus {
@@ -37,8 +48,14 @@
   border-color: var(--color-primary);
 }
 
+.input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .resetButton {
-  padding: var(--space-sm) var(--space-md);
+  padding: 0 var(--space-lg);
+  height: 40px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
@@ -47,10 +64,13 @@
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .resetButton:hover {
   background: var(--color-hover);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .errorNote {
@@ -59,10 +79,20 @@
   flex-basis: 100%;
 }
 
+@media (max-width: 1024px) {
+  .toolbar {
+    align-items: stretch;
+  }
+}
+
 @media (max-width: 768px) {
   .toolbar {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .fields {
+    flex-direction: column;
   }
 
   .field {

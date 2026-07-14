@@ -1,9 +1,11 @@
-import { useMemo, useState } from "react";
-import LoadingScreen from "../components/LoadingScreen.jsx";
+import { useEffect, useMemo, useState } from "react";
 import ErrorMessage from "../components/ErrorMessage.jsx";
 import KpiCard from "../components/KpiCard.jsx";
+import KpiCardSkeleton from "../components/KpiCardSkeleton.jsx";
 import DashboardPanel from "../components/DashboardPanel.jsx";
 import FilterToolbar from "../components/FilterToolbar.jsx";
+import ActiveFilters from "../components/ActiveFilters.jsx";
+import ChartSkeleton from "../components/ChartSkeleton.jsx";
 import DailySalesChart from "../components/charts/DailySalesChart.jsx";
 import PlatformPerformanceChart from "../components/charts/PlatformPerformanceChart.jsx";
 import BrandPerformanceChart from "../components/charts/BrandPerformanceChart.jsx";
@@ -22,9 +24,17 @@ const DEFAULT_FILTERS = {
   brand: "",
 };
 
-function PanelContent({ loading, error, onRetry, loadingMessage, children }) {
+const KPI_TRENDS = {
+  grossSales: "up",
+  totalOrders: "up",
+  averageOrderValue: "neutral",
+  totalTax: "neutral",
+  totalDiscount: "down",
+};
+
+function PanelContent({ loading, error, onRetry, children }) {
   if (loading) {
-    return <LoadingScreen message={loadingMessage} />;
+    return <ChartSkeleton />;
   }
   if (error) {
     return <ErrorMessage message={error} onRetry={onRetry} />;
@@ -41,8 +51,16 @@ function buildQueryParams(filters) {
   return params;
 }
 
+function formatTimestamp(date) {
+  return date.toLocaleString("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
+
 export default function Dashboard() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const [lastUpdated, setLastUpdated] = useState(null);
   const queryParams = useMemo(() => buildQueryParams(filters), [filters]);
 
   const {
@@ -79,6 +97,17 @@ export default function Dashboard() {
     refetch: refetchBrand,
   } = useBrandPerformance(queryParams);
 
+  const allLoaded =
+    !summaryLoading && !dailySalesLoading && !platformLoading && !brandLoading;
+  const anyError = summaryError || dailySalesError || platformError || brandError;
+
+  useEffect(() => {
+    if (allLoaded && !anyError) {
+      setLastUpdated(new Date());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allLoaded, anyError, summary, dailySales, platformPerformance, brandPerformance]);
+
   const grossSales =
   summary?.total_sales ??
   summary?.gross_sales ??
@@ -91,7 +120,16 @@ export default function Dashboard() {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.heading}>Restaurant POS Dashboard</h1>
+      <div className={styles.headerRow}>
+        <div className={styles.headingGroup}>
+          <h1 className={styles.heading}>Restaurant POS Dashboard</h1>
+          <span className={styles.lastUpdated}>
+            {lastUpdated
+              ? `Last Updated: ${formatTimestamp(lastUpdated)}`
+              : "Last Updated: —"}
+          </span>
+        </div>
+      </div>
 
       <FilterToolbar
         filters={filters}
@@ -103,62 +141,82 @@ export default function Dashboard() {
         error={filterOptionsError}
       />
 
-      {summaryLoading && <LoadingScreen message="Loading summary..." />}
-      {summaryError && (
+      <ActiveFilters filters={filters} />
+
+      {summaryError ? (
         <ErrorMessage
           message={`Failed to load summary: ${summaryError}`}
           onRetry={refetchSummary}
         />
-      )}
-
-      {!summaryLoading && !summaryError && (
+      ) : (
         <div className={styles.kpiRow}>
-          <KpiCard title="Gross Sales" value={formatCurrency(grossSales)} />
-          <KpiCard title="Total Orders" value={formatNumber(totalOrders)} />
-          <KpiCard
-            title="Average Order Value"
-            value={formatCurrency(averageOrderValue)}
-          />
-          <KpiCard title="Total Tax" value={formatCurrency(totalTax)} />
-          <KpiCard
-            title="Total Discount"
-            value={formatCurrency(totalDiscount)}
-          />
+          {summaryLoading ? (
+            <>
+              <KpiCardSkeleton />
+              <KpiCardSkeleton />
+              <KpiCardSkeleton />
+              <KpiCardSkeleton />
+              <KpiCardSkeleton />
+            </>
+          ) : (
+            <>
+              <KpiCard
+                title="Gross Sales"
+                value={formatCurrency(grossSales)}
+                trend={KPI_TRENDS.grossSales}
+              />
+              <KpiCard
+                title="Total Orders"
+                value={formatNumber(totalOrders)}
+                trend={KPI_TRENDS.totalOrders}
+              />
+              <KpiCard
+                title="Average Order Value"
+                value={formatCurrency(averageOrderValue)}
+                trend={KPI_TRENDS.averageOrderValue}
+              />
+              <KpiCard title="Total Tax" value={formatCurrency(totalTax)} trend={KPI_TRENDS.totalTax} />
+              <KpiCard
+                title="Total Discount"
+                value={formatCurrency(totalDiscount)}
+                trend={KPI_TRENDS.totalDiscount}
+              />
+            </>
+          )}
         </div>
       )}
 
-      <DashboardPanel title="Daily Sales Trend">
-        <PanelContent
-          loading={dailySalesLoading}
-          error={dailySalesError}
-          onRetry={refetchDailySales}
-          loadingMessage="Loading daily sales..."
-        >
-          <DailySalesChart data={dailySales ?? []} />
-        </PanelContent>
-      </DashboardPanel>
+      <div className={styles.chartsGrid}>
+        <DashboardPanel title="Daily Sales Trend">
+          <PanelContent
+            loading={dailySalesLoading}
+            error={dailySalesError}
+            onRetry={refetchDailySales}
+          >
+            <DailySalesChart data={dailySales ?? []} />
+          </PanelContent>
+        </DashboardPanel>
 
-      <DashboardPanel title="Platform Performance">
-        <PanelContent
-          loading={platformLoading}
-          error={platformError}
-          onRetry={refetchPlatform}
-          loadingMessage="Loading platform performance..."
-        >
-          <PlatformPerformanceChart data={platformPerformance ?? []} />
-        </PanelContent>
-      </DashboardPanel>
+        <DashboardPanel title="Platform Performance">
+          <PanelContent
+            loading={platformLoading}
+            error={platformError}
+            onRetry={refetchPlatform}
+          >
+            <PlatformPerformanceChart data={platformPerformance ?? []} />
+          </PanelContent>
+        </DashboardPanel>
 
-      <DashboardPanel title="Brand Performance">
-        <PanelContent
-          loading={brandLoading}
-          error={brandError}
-          onRetry={refetchBrand}
-          loadingMessage="Loading brand performance..."
-        >
-          <BrandPerformanceChart data={brandPerformance ?? []} />
-        </PanelContent>
-      </DashboardPanel>
+        <DashboardPanel title="Brand Performance">
+          <PanelContent
+            loading={brandLoading}
+            error={brandError}
+            onRetry={refetchBrand}
+          >
+            <BrandPerformanceChart data={brandPerformance ?? []} />
+          </PanelContent>
+        </DashboardPanel>
+      </div>
     </div>
   );
 }

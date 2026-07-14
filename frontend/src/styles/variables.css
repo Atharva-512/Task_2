@@ -9,6 +9,11 @@
   --color-primary: #2f6feb;
   --color-primary-subtle: #eaf1fd;
   --color-danger: #d64545;
+  --color-danger-subtle: #fdf1f1;
+  --color-danger-border: #f5d3d3;
+  --color-success: #1c9a6c;
+  --color-skeleton-base: #edeef2;
+  --color-skeleton-highlight: #f8f9fb;
 
   /* Typography */
   --font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -16,6 +21,7 @@
   --font-size-md: 1rem;
   --font-size-lg: 1.25rem;
   --font-size-xl: 1.75rem;
+  --font-size-xxl: 2rem;
 
   /* Spacing */
   --space-xs: 4px;
@@ -30,5 +36,6 @@
   --radius-md: 8px;
   --radius-lg: 12px;
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
