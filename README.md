@@ -668,14 +668,6 @@ If you discover a bug or have suggestions for improvement, please open an issue 
 
 ---
 
-# 📄 License
-
-This project was developed for educational and portfolio purposes as part of a Restaurant POS Analytics Dashboard assignment.
-
-The implementation demonstrates a production-style analytics serving layer using React, FastAPI, and DuckDB while utilizing a synthetic dataset for public deployment.
-
----
-
 <div align="center">
 
 ### ⭐ If you found this project useful, consider giving it a star.
