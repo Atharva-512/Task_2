@@ -23,6 +23,16 @@ Designed as a lightweight analytics serving layer with real-time SQL queries, in
 
 ---
 
+## 🌐 Live Demo
+
+**Frontend:** https://your-vercel-app.vercel.app
+
+**Backend API:** https://your-render-app.onrender.com
+
+**Swagger Documentation:** https://your-render-app.onrender.com/docs
+
+---
+
 ## 📌 Overview
 
 Restaurant POS Analytics Dashboard is a full-stack business intelligence application developed to expose analytical insights from an existing Restaurant POS data warehouse.
