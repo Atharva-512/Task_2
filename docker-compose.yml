@@ -1,0 +1,27 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: restaurant-pos-backend
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      APP_ENV: production
+      HOST: 0.0.0.0
+      PORT: 8000
+      DATABASE_PATH: /app/synthetic_data/restaurant_pos_synthetic.duckdb
+
+    volumes:
+      - ./synthetic_data:/app/synthetic_data:ro
+
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
