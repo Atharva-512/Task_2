@@ -61,6 +61,15 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    @app.get("/", tags=["Root"])
+    async def root():
+        return {
+            "service": app.title,
+            "version": app.version,
+            "status": "running",
+            "documentation": "/docs",
+            "health": "/health",
+        }
 
     app.include_router(health.router)
     app.include_router(analytics.router)
