@@ -15,7 +15,7 @@ export default function Header({ onMenuClick }) {
       </button>
 
       <h1 className={styles.title}>
-        Restaurant POS Analytics
+        {window.innerWidth <= 768 ? "Dashboard" : "Restaurant POS Analytics"}
       </h1>
     </header>
   );

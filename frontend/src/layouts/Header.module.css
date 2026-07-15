@@ -102,18 +102,36 @@
 ======================================= */
 
 @media (max-width: 768px) {
-  .header {
-    height: var(--header-height-mobile);
 
-    padding: 0 var(--page-padding-mobile);
+  .header{
+    height:var(--header-height-mobile);
+
+    padding:0 16px;
+
+    justify-content:flex-start;
+
+    gap:14px;
   }
 
-  .title {
-    font-size: var(--font-size-md);
+  .title{
+    font-size:1.2rem;
+
+    flex:1;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
   }
 
-  .menuButton {
-    width: 40px;
-    height: 40px;
+  .menuButton{
+    display:flex;
+
+    width:40px;
+    height:40px;
+
+    flex-shrink:0;
   }
+
 }

@@ -137,27 +137,47 @@
    MOBILE
 ====================================== */
 
-@media (max-width: 768px) {
+@media (max-width:768px){
 
-  .page {
-    gap: var(--space-lg);
-  }
+.page{
 
-  .heading {
-    font-size: var(--font-size-lg);
-  }
+gap:20px;
 
-  .lastUpdated {
-    font-size: var(--font-size-xs);
-  }
+}
 
-  .kpiRow {
-    grid-template-columns: 1fr;
-  }
+.headerRow{
 
-  .chartsGrid {
-    gap: var(--space-lg);
-  }
+gap:10px;
+
+}
+
+.heading{
+
+font-size:2rem;
+
+line-height:1.15;
+
+}
+
+.lastUpdated{
+
+font-size:.85rem;
+
+}
+
+.kpiRow{
+
+grid-template-columns:1fr;
+
+gap:16px;
+
+}
+
+.chartsGrid{
+
+gap:20px;
+
+}
 
 }
 

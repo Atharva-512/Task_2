@@ -179,26 +179,38 @@
    MOBILE
 ========================================== */
 
-@media (max-width: 768px) {
+@media(max-width:768px){
 
-  .card {
-    min-height: 130px;
+.card{
 
-    padding: var(--space-md);
-  }
+min-height:135px;
 
-  .title {
-    font-size: var(--font-size-xs);
-  }
+padding:20px;
 
-  .value {
-    font-size: 1.8rem;
-  }
+}
 
-  .trendIcon {
-    width: 20px;
-    height: 20px;
-  }
+.title{
+
+font-size:.8rem;
+
+letter-spacing:.06em;
+
+}
+
+.value{
+
+font-size:2rem;
+
+line-height:1.15;
+
+}
+
+.trendIcon{
+
+width:20px;
+height:20px;
+
+}
 
 }
 

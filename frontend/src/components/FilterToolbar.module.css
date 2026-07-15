@@ -223,39 +223,52 @@
    MOBILE
 ============================================ */
 
-@media (max-width: 768px) {
+@media(max-width:768px){
 
-  .toolbar {
-    padding: var(--space-md);
+.toolbar{
 
-    gap: var(--space-md);
-  }
+padding:18px;
 
-  .fields {
-    grid-template-columns: 1fr;
+gap:16px;
 
-    gap: var(--space-md);
-  }
+}
 
-  .field {
-    width: 100%;
-  }
+.fields{
 
-  .label {
-    font-size: var(--font-size-xs);
-  }
+grid-template-columns:1fr;
 
-  .input {
-    height: 48px;
+gap:16px;
 
-    font-size: var(--font-size-sm);
-  }
+}
 
-  .resetButton {
-    height: 48px;
+.field{
 
-    width: 100%;
-  }
+width:100%;
+
+}
+
+.label{
+
+font-size:.85rem;
+
+}
+
+.input{
+
+height:50px;
+
+font-size:16px;
+}
+
+.resetButton{
+
+width:100%;
+
+height:50px;
+
+margin-top:4px;
+
+}
 
 }
 
