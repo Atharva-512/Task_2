@@ -1,21 +1,88 @@
 .shell {
   min-height: 100vh;
+  background: var(--color-background);
 }
 
 .content {
   margin-left: var(--sidebar-width);
+  min-height: 100vh;
+
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+
+  transition: margin-left var(--transition-normal);
+
+  background: var(--color-background);
 }
 
 .main {
   flex: 1;
-  padding: var(--space-lg);
+
+  width: 100%;
+  max-width: var(--container-max-width);
+
+  margin: 0 auto;
+
+  padding: var(--page-padding-desktop);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
 }
+
+/* ===============================
+   Large Laptop
+================================ */
+
+@media (max-width: 1440px) {
+  .main {
+    padding: var(--page-padding-laptop);
+  }
+}
+
+/* ===============================
+   Laptop
+================================ */
+
+@media (max-width: 1200px) {
+  .main {
+    padding: var(--page-padding-laptop);
+  }
+}
+
+/* ===============================
+   Tablet
+================================ */
 
 @media (max-width: 1024px) {
   .content {
     margin-left: 0;
+  }
+
+  .main {
+    max-width: 100%;
+    padding: var(--page-padding-tablet);
+  }
+}
+
+/* ===============================
+   Mobile
+================================ */
+
+@media (max-width: 768px) {
+  .main {
+    padding: var(--page-padding-mobile);
+    gap: var(--space-lg);
+  }
+}
+
+/* ===============================
+   Small Mobile
+================================ */
+
+@media (max-width: 480px) {
+  .main {
+    padding: var(--space-md);
+    gap: var(--space-md);
   }
 }

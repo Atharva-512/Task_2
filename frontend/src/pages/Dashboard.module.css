@@ -1,68 +1,182 @@
 .page {
+  width: 100%;
+
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+
+  gap: var(--space-2xl);
 }
+
+/* ======================================
+   HEADER
+====================================== */
 
 .headerRow {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
   justify-content: space-between;
-  gap: var(--space-sm);
-  padding-top: var(--space-xs);
+  align-items: flex-end;
+  flex-wrap: wrap;
+
+  gap: var(--space-lg);
 }
 
 .headingGroup {
   display: flex;
   flex-direction: column;
+
   gap: var(--space-xs);
 }
 
 .heading {
-  font-size: var(--font-size-xl);
-  line-height: 1.35;
-  font-weight: 700;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+
   color: var(--color-text-primary);
-  padding-top: 2px;
+
+  line-height: var(--line-height-tight);
+
+  letter-spacing: -0.02em;
 }
 
 .lastUpdated {
   font-size: var(--font-size-sm);
+
   color: var(--color-text-secondary);
 }
 
+/* ======================================
+   KPI GRID
+====================================== */
+
 .kpiRow {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+
   gap: var(--space-lg);
+
   align-items: stretch;
 }
 
+/* ======================================
+   CHARTS
+====================================== */
+
 .chartsGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-lg);
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: var(--space-xl);
+
+  align-items: start;
 }
+
+/* ======================================
+   LARGE LAPTOP
+====================================== */
+
+@media (max-width: 1440px) {
+
+  .page {
+    gap: var(--space-xl);
+  }
+
+}
+
+/* ======================================
+   LAPTOP
+====================================== */
 
 @media (max-width: 1200px) {
-  .kpiRow {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .kpiRow {
-    grid-template-columns: repeat(2, 1fr);
-  }
 
   .headerRow {
     align-items: flex-start;
   }
+
+  .heading {
+    font-size: var(--font-size-xl);
+  }
+
+  .kpiRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+
 }
 
-@media (max-width: 480px) {
+/* ======================================
+   TABLET
+====================================== */
+
+@media (max-width: 992px) {
+
+  .page {
+    gap: var(--space-lg);
+  }
+
+  .headerRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .heading {
+    font-size: var(--font-size-xl);
+  }
+
+  .kpiRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+/* ======================================
+   MOBILE
+====================================== */
+
+@media (max-width: 768px) {
+
+  .page {
+    gap: var(--space-lg);
+  }
+
+  .heading {
+    font-size: var(--font-size-lg);
+  }
+
+  .lastUpdated {
+    font-size: var(--font-size-xs);
+  }
+
   .kpiRow {
     grid-template-columns: 1fr;
   }
+
+  .chartsGrid {
+    gap: var(--space-lg);
+  }
+
+}
+
+/* ======================================
+   SMALL MOBILE
+====================================== */
+
+@media (max-width: 480px) {
+
+  .page {
+    gap: var(--space-md);
+  }
+
+  .headerRow {
+    gap: var(--space-md);
+  }
+
+  .heading {
+    font-size: var(--font-size-md);
+  }
+
 }

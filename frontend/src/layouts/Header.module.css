@@ -1,42 +1,119 @@
 .header {
-  height: var(--header-height);
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: 0 var(--space-lg);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
-  z-index: 50;
+
+  z-index: var(--z-sticky);
+
+  height: var(--header-height);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 var(--page-padding-desktop);
+
+  background: rgba(255, 255, 255, 0.92);
+
+  backdrop-filter: blur(14px);
+
+  border-bottom: 1px solid var(--color-border);
+
+  transition: all var(--transition-normal);
 }
 
 .title {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+
+  font-weight: var(--font-weight-semibold);
+
   color: var(--color-text-primary);
+
+  letter-spacing: -0.02em;
 }
 
 .menuButton {
   display: none;
-  flex-direction: column;
+
+  width: 42px;
+  height: 42px;
+
+  align-items: center;
   justify-content: center;
-  gap: 4px;
-  width: 32px;
-  height: 32px;
-  background: none;
-  border: none;
-  cursor: pointer;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  border-radius: var(--radius-md);
+
+  transition: background var(--transition-fast);
+}
+
+.menuButton:hover {
+  background: var(--color-hover);
+}
+
+.menuButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .bar {
+  width: 20px;
   height: 2px;
+
   background: var(--color-text-primary);
-  border-radius: 1px;
+
+  border-radius: 999px;
+
+  transition: all var(--transition-fast);
 }
 
+/* =======================================
+   Laptop
+======================================= */
+
+@media (max-width: 1200px) {
+  .header {
+    padding: 0 var(--page-padding-laptop);
+  }
+}
+
+/* =======================================
+   Tablet
+======================================= */
+
 @media (max-width: 1024px) {
+  .header {
+    padding: 0 var(--page-padding-tablet);
+  }
+
   .menuButton {
     display: flex;
+  }
+
+  .title {
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* =======================================
+   Mobile
+======================================= */
+
+@media (max-width: 768px) {
+  .header {
+    height: var(--header-height-mobile);
+
+    padding: 0 var(--page-padding-mobile);
+  }
+
+  .title {
+    font-size: var(--font-size-md);
+  }
+
+  .menuButton {
+    width: 40px;
+    height: 40px;
   }
 }

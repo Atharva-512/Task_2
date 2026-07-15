@@ -1,105 +1,272 @@
 .toolbar {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  padding: var(--space-md) var(--space-lg);
+  width: 100%;
+
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
   justify-content: space-between;
-  gap: var(--space-md);
+  align-items: flex-end;
+  flex-wrap: wrap;
+
+  gap: var(--space-lg);
+
+  padding: var(--space-lg);
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+
+  box-shadow: var(--shadow-sm);
+
+  transition: box-shadow var(--transition-normal);
 }
 
+.toolbar:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   FILTER GROUP
+============================================ */
+
 .fields {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: var(--space-md);
-  flex: 1 1 auto;
+  flex: 1;
+
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(170px, 1fr));
+
+  gap: var(--space-lg);
 }
 
 .field {
   display: flex;
   flex-direction: column;
+
   gap: var(--space-xs);
-  min-width: 150px;
-  flex: 1 1 150px;
+
+  min-width: 0;
 }
 
 .label {
   font-size: var(--font-size-sm);
+
+  font-weight: var(--font-weight-semibold);
+
   color: var(--color-text-secondary);
-  font-weight: 600;
 }
 
+/* ============================================
+   INPUTS
+============================================ */
+
 .input {
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-primary);
+  width: 100%;
+
+  height: 46px;
+
+  padding: 0 var(--space-md);
+
   background: var(--color-background);
-  height: 40px;
-  transition: border-color 0.15s ease;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-md);
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-sm);
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.input:hover {
+  border-color: var(--color-primary);
 }
 
 .input:focus {
   outline: none;
+
   border-color: var(--color-primary);
+
+  box-shadow: 0 0 0 3px rgba(47, 111, 235, 0.12);
+
+  background: var(--color-surface);
 }
 
 .input:disabled {
-  opacity: 0.6;
+  opacity: .6;
   cursor: not-allowed;
 }
 
+/* ============================================
+   RESET BUTTON
+============================================ */
+
 .resetButton {
-  padding: 0 var(--space-lg);
-  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 46px;
+
+  padding: 0 var(--space-xl);
+
   border: 1px solid var(--color-border);
+
   border-radius: var(--radius-md);
+
   background: var(--color-surface);
+
   color: var(--color-text-primary);
+
   font-size: var(--font-size-sm);
-  font-weight: 600;
+
+  font-weight: var(--font-weight-semibold);
+
   cursor: pointer;
+
   white-space: nowrap;
-  transition: background 0.15s ease, border-color 0.15s ease;
+
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .resetButton:hover {
   background: var(--color-hover);
+
   border-color: var(--color-primary);
+
   color: var(--color-primary);
+
+  transform: translateY(-1px);
 }
+
+.resetButton:active {
+  transform: translateY(0);
+}
+
+.resetButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   ERROR
+============================================ */
 
 .errorNote {
-  font-size: var(--font-size-sm);
+  grid-column: 1 / -1;
+
   color: var(--color-danger);
-  flex-basis: 100%;
+
+  font-size: var(--font-size-sm);
+
+  font-weight: var(--font-weight-medium);
 }
 
-@media (max-width: 1024px) {
+/* ============================================
+   LARGE LAPTOP
+============================================ */
+
+@media (max-width: 1440px) {
+
+  .fields {
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
+  }
+
+}
+
+/* ============================================
+   LAPTOP
+============================================ */
+
+@media (max-width: 1200px) {
+
   .toolbar {
     align-items: stretch;
   }
+
+  .fields {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
 }
 
-@media (max-width: 768px) {
+/* ============================================
+   TABLET
+============================================ */
+
+@media (max-width: 992px) {
+
   .toolbar {
     flex-direction: column;
     align-items: stretch;
   }
 
   .fields {
-    flex-direction: column;
-  }
-
-  .field {
-    min-width: 0;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .resetButton {
     width: 100%;
   }
+
+}
+
+/* ============================================
+   MOBILE
+============================================ */
+
+@media (max-width: 768px) {
+
+  .toolbar {
+    padding: var(--space-md);
+
+    gap: var(--space-md);
+  }
+
+  .fields {
+    grid-template-columns: 1fr;
+
+    gap: var(--space-md);
+  }
+
+  .field {
+    width: 100%;
+  }
+
+  .label {
+    font-size: var(--font-size-xs);
+  }
+
+  .input {
+    height: 48px;
+
+    font-size: var(--font-size-sm);
+  }
+
+  .resetButton {
+    height: 48px;
+
+    width: 100%;
+  }
+
+}
+
+/* ============================================
+   SMALL MOBILE
+============================================ */
+
+@media (max-width: 480px) {
+
+  .toolbar {
+    padding: var(--space-sm);
+  }
+
 }
